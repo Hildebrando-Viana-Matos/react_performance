@@ -1,6 +1,7 @@
 import { memo, useState } from "react";
 import { AddProductToWishListProps } from "./AddProductToWishList";
 import dynamic from "next/dynamic";
+import lodash from "lodash";
 
 //O componente só vai carregar quando for necessario
 const AddProductToWishList = dynamic<AddProductToWishListProps>(
@@ -53,7 +54,7 @@ export function ProductItemComponent({
 }
 
 export const ProductItem = memo(ProductItemComponent, (prevPros, nextProps) => {
-  return Object.is(prevPros.product, nextProps.product);
+  return lodash.isEqual(prevPros.product, nextProps.product);
   // Verificando se as propriedades estão iguais caso tenha mudança nessas propriedades
   // Para o componente atualizar
 });
