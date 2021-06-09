@@ -1,9 +1,25 @@
-import { memo } from "react";
+import { memo, useState } from "react";
+import { AddProductToWishListProps } from "./AddProductToWishList";
+import dynamic from "next/dynamic";
+
+//O componente só vai carregar quando for necessario
+const AddProductToWishList = dynamic<AddProductToWishListProps>(
+  () => {
+    return import("./AddProductToWishList").then(
+      (mod) => mod.AddProductToWishList
+    );
+  },
+  {
+    // Enquanto o componente não aparece, vai aparecer a mensagem de carregando
+    loading: () => <span>Carregando...</span>,
+  }
+);
 
 interface ProductItemProps {
   product: {
     id: number;
     price: number;
+    priceFormatted: string;
     title: string;
   };
   onAddToWishList: (id: number) => void;
@@ -13,12 +29,25 @@ export function ProductItemComponent({
   product,
   onAddToWishList,
 }: ProductItemProps) {
+  const [isAddingToWishList, setIsAddingWishList] = useState(false);
+
+  // async function showFormattedDate() {
+  //   const {format} = await import('date-fns');
+  //   format() eu apenas importo a função quando o usuário for usar
+  // }
+
   return (
     <div>
-      {product.title} - <strong>{product.price}</strong>
-      <button onClick={() => onAddToWishList(product.id)}>
-        Add to with wishList
+      {product.title} - <strong>{product.priceFormatted}</strong>
+      <button onClick={() => setIsAddingWishList(true)}>
+        Adicionar aos favoritos
       </button>
+      {isAddingToWishList && (
+        <AddProductToWishList
+          onAddToWishList={() => onAddToWishList(product.id)}
+          onRequestClose={() => setIsAddingWishList(false)}
+        />
+      )}
     </div>
   );
 }
